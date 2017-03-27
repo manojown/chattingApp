@@ -46,7 +46,7 @@
             function myFunction(){
                 socket.emit('typing', username);
             }
-            var username = prompt('What\'s your username?');
+            var username = prompt('Enter your username');
             socket.emit('new_client', username);
             document.title = username + ' - ' + document.title;
 
