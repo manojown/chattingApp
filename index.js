@@ -29,4 +29,6 @@ io.sockets.on('connection', function (socket, username) {
     }); 
 });
 
-server.listen(8080);
+server.listen(8080,function(){
+    console.log('listen on 8080 port');
+});
