@@ -1,0 +1,11 @@
+body {
+  padding: 10px;
+}
+#chat-output {
+  height: 150px;
+  overflow-y: scroll;
+}
+#chat_zone{
+	margin-left: 10%;
+	margin-right: 10%;
+}

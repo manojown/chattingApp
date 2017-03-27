@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <link rel="stylesheet" type="text/css" href="script.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+        <meta charset="utf-8" />
+        <title>Real-time Super Chat!</title>
+        <style>
+            #zone_chat strong {
+                color: white;
+                background-color: black;
+                padding: 2px;
+            }
+        </style>
+    </head>
+ 
+    <body>
+        <h1>Chat  App</h1>
+       
+        <hr>
+        <form action="/" method="post" id="chat_form" class="form-inline">
+            <input type="text" name="message" class="form-control" id="message" placeholder="Your message..." size="100"  style='margin-left: 2%;margin-right: 2%' autofocus onkeypress="myFunction()"/>
+            <div layout-align='center center'>
+            <input type="submit" id="send_message"  class="btn btn-primary" value="Send" />
+            </div>
+            <div id='typer'> hii</div>
+        </form>
+        <hr>
+       
+        <section id="chat_zone" style="margin-left: 10%;margin-right: 10%;">
+            
+            
+        </section>
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+
+            // Connecting to socket.io
+            var socket = io.connect('http://localhost:8080');
+            $('#typer').hide()
+            // The username is requested, sent to the server and displayed in the title
+            function myFunction(){
+                socket.emit('typing', username);
+            }
+            var username = prompt('What\'s your username?');
+            socket.emit('new_client', username);
+            document.title = username + ' - ' + document.title;
+
+            // When a message is received it's inserted in the page
+             socket.on('showType', function(data) {
+                typing(data.u.username, data.u.message)
+            })
+
+            socket.on('message', function(data) {
+                insertMessage(data.u.username, data.u.message)
+            })
+
+            // When a new client connects, the information is displayed
+            socket.on('new_client', function(username) {
+                $('#chat_zone').prepend('<div class="card-block" id="chat_zone"><strong>'+username+' join chat</strong></div><hr>');
+            })
+
+            // When the form is sent, the message is sent and displayed on the page
+            $('#chat_form').submit(function () {
+                var message = $('#message').val();
+                socket.emit('message', message); // Sends the message to the others
+                insertMessage(username, message); // Also displays the message on our page
+                $('#message').val('').focus(); // Empties the chat form and puts the focus back on it
+                return false; // Blocks 'classic' sending of the form
+            });
+            //  for tping purpose
+            function typing(username,message){
+                $('#typer').show();
+                    $("#typer").html('<div class="card-block chatbox" ><strong><p style="color:green;">'+username+'</strong> : is typing<p></div>');
+                    
+                    setTimeout(function(){   $('#typer').hide(); }, 2000);
+
+            }
+            // Adds a message to the page
+            function insertMessage(username, message) {
+
+                $('#chat_zone').prepend('<div class="card-block chatbox" id="chat_zone"><strong>'+username+'</strong> : '+message+'</div><hr>')
+            }
+        </script>
+    </body>
+</html>
