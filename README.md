@@ -4,3 +4,6 @@
   1. git clone https://github.com/manojown/chattingApp.git
   2. npm  install
   3. node index.js
+  
+# now Open 
+  http://localhost:8080/
